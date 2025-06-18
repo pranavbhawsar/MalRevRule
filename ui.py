@@ -102,10 +102,10 @@ def download_file(file_type):
             path = os.path.join("reports", "sample_analysis_stix.json")
             return send_file(path, as_attachment=True)
         elif file_type == 'yara_rule':
-            path = os.path.join("signatures", "sample.yara")
+            path = os.path.join("signatures", "malware_signature.yara")
             return send_file(path, as_attachment=True)
         elif file_type == 'firewall_rules':
-            path = os.path.join("firewall_rules", "sample_firewall_rules.txt")
+            path = os.path.join("firewall_rules", "firewall_rules.txt")
             return send_file(path, as_attachment=True)
         else:
             flash('Invalid file type requested', 'error')
