@@ -1,0 +1,70 @@
+{
+    "filename": "bdcad3bd0023fcab3e03c7ab767f67f0c5763bb6d5a8da1a03a3b1ada3643889.exe",
+    "network": {
+        "dns_requests": [
+            "malicious.example.com"
+        ],
+        "http_requests": [
+            {
+                "url": "http://1.0.0.0/payload",
+                "ip": "1.0.0.0"
+            },
+            {
+                "url": "http://1.0.0.4/payload",
+                "ip": "1.0.0.4"
+            },
+            {
+                "url": "http://1.0.0.1/payload",
+                "ip": "1.0.0.1"
+            },
+            {
+                "url": "http://3.3.14.2/payload",
+                "ip": "3.3.14.2"
+            },
+            {
+                "url": "http://255.255.255.255/payload",
+                "ip": "255.255.255.255"
+            },
+            {
+                "url": "http://6.0.0.0/payload",
+                "ip": "6.0.0.0"
+            },
+            {
+                "url": "http://127.0.0.1/payload",
+                "ip": "127.0.0.1"
+            },
+            {
+                "url": "http://0.0.0.0/payload",
+                "ip": "0.0.0.0"
+            },
+            {
+                "url": "http://0.0.0.1/payload",
+                "ip": "0.0.0.1"
+            }
+        ],
+        "ips": [
+            "1.0.0.0",
+            "1.0.0.4",
+            "1.0.0.1",
+            "3.3.14.2",
+            "255.255.255.255",
+            "6.0.0.0",
+            "127.0.0.1",
+            "0.0.0.0",
+            "0.0.0.1",
+            "8.8.8.8"
+        ]
+    },
+    "file_changes": [
+        {
+            "action": "created",
+            "path": "C:\\Temp\\malware_copy.exe"
+        },
+        {
+            "action": "modified",
+            "path": "C:\\Windows\\System32\\config\\SYSTEM"
+        }
+    ],
+    "process_activity": [],
+    "timestamp": "2025-06-18T01:25:27.189237"
+}
