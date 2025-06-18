@@ -5,6 +5,7 @@ reports/
 signatures/
 firewall_rules/
 testenv/
+logs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

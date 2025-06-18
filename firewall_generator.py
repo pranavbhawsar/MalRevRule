@@ -49,6 +49,7 @@ def generate_firewall_rules(static_data, dynamic_data, output_path):
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         with open(output_path, "w") as f:
             f.write("\n".join(rules))
+        os.chmod(output_path, 0o777)
         logging.info(f"Firewall rules generated: {output_path}")
         return {"success": True, "output_file": output_path}
     except Exception as e:

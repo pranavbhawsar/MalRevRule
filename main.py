@@ -59,26 +59,26 @@ def main(input_file_path):
         if not dynamic_analysis_result.get("output_file"):
             raise Exception("Dynamic analysis failed: No output file path returned")
 
-        # Step 4: Generate reports
-        logging.info("Starting report generation")
-        report_result = generate_reports(static_analysis_result["output_file"], dynamic_analysis_result["output_file"])
-        if not report_result["success"]:
-            logging.error(f"Report generation failed: {report_result['error']}")
-            raise Exception(f"Report generation failed: {report_result['error']}")
-
-        # Step 5: Generate YARA signatures
+        # Step 4: Generate YARA signatures
         logging.info("Starting signature generation")
         signature_result = generate_signatures(static_analysis_result["output_file"], dynamic_analysis_result["output_file"])
         if not signature_result["success"]:
             logging.error(f"Signature generation failed: {signature_result['error']}")
             raise Exception(f"Signature generation failed: {signature_result['error']}")
-
-        # Step 6: Generate firewall rules
+        
+        # Step 5: Generate firewall rules
         logging.info("Starting firewall rule generation")
         firewall_result = generate_firewall(static_analysis_result["output_file"], dynamic_analysis_result["output_file"])
         if not firewall_result["success"]:
             logging.error(f"Firewall rule generation failed: {firewall_result['error']}")
             raise Exception(f"Firewall rule generation failed: {firewall_result['error']}")
+        
+        # Step 6: Generate reports
+        logging.info("Starting report generation")
+        report_result = generate_reports(static_analysis_result["output_file"], dynamic_analysis_result["output_file"])
+        if not report_result["success"]:
+            logging.error(f"Report generation failed: {report_result['error']}")
+            raise Exception(f"Report generation failed: {report_result['error']}")
 
         # Return outputs
         outputs = {

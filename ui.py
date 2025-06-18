@@ -1,10 +1,13 @@
 import os
 import shutil
 import json
+import threading
+import webbrowser
+import time
+import logging
 from flask import Flask, render_template, request, send_file, flash, redirect, url_for
 from werkzeug.utils import secure_filename
 from main import main as run_pipeline
-import logging
 
 # Setup logging
 logging.basicConfig(filename=os.path.join("logs", "analysis_log.db"),
@@ -29,14 +32,13 @@ def index():
 def upload_file():
     """Handle file uploads and trigger the pipeline."""
     if request.method == 'POST':
-        # Check if a file was uploaded
         if 'file' not in request.files:
             flash('No file part', 'error')
-            return render_template('upload.html')  # Stay on upload page
+            return render_template('upload.html')
         file = request.files['file']
         if file.filename == '':
             flash('No file selected', 'error')
-            return render_template('upload.html')  # Stay on upload page
+            return render_template('upload.html')
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -54,42 +56,39 @@ def upload_file():
                 # Run the pipeline
                 outputs = run_pipeline(file_path)
                 logging.info(f"Pipeline executed successfully: {outputs}")
-                return redirect(url_for('results'))  # Redirect to results on success
+                return redirect(url_for('results'))
             except Exception as e:
                 logging.error(f"Pipeline failed: {str(e)}")
                 flash(f"Analysis failed: {str(e)}", 'error')
-                return render_template('upload.html')  # Stay on upload page with error
+                return render_template('upload.html')
         else:
             flash('Invalid file type. Only .exe files are allowed.', 'error')
-            return render_template('upload.html')  # Stay on upload page
+            return render_template('upload.html')
     return render_template('upload.html')
 
 @app.route('/results')
 def results():
     """Display the analysis results."""
     try:
-        # Load static analysis
         static_file = os.path.join("output", "sample_analysis.json")
         with open(static_file, 'r') as f:
             static_data = json.load(f)
 
-        # Load dynamic analysis
         dynamic_file = os.path.join("output", "sample_dynamic.json")
         with open(dynamic_file, 'r') as f:
             dynamic_data = json.load(f)
 
-        # Prepare data for visualization
         network_ips = dynamic_data['network']['ips']
         network_counts = {ip: network_ips.count(ip) for ip in set(network_ips)}
 
         return render_template('results.html',
-                              static_data=static_data,
-                              dynamic_data=dynamic_data,
-                              network_counts=network_counts)
+                               static_data=static_data,
+                               dynamic_data=dynamic_data,
+                               network_counts=network_counts)
     except Exception as e:
         logging.error(f"Failed to load results: {str(e)}")
         flash(f"Error loading results: {str(e)}", 'error')
-        return redirect(url_for('upload_file'))  # Redirect to upload page on error
+        return redirect(url_for('upload_file'))
 
 @app.route('/download/<file_type>')
 def download_file(file_type):
@@ -97,23 +96,29 @@ def download_file(file_type):
     try:
         if file_type == 'pdf_report':
             path = os.path.join("reports", "sample_analysis_report.pdf")
-            return send_file(path, as_attachment=True)
         elif file_type == 'stix_report':
             path = os.path.join("reports", "sample_analysis_stix.json")
-            return send_file(path, as_attachment=True)
         elif file_type == 'yara_rule':
             path = os.path.join("signatures", "malware_signature.yara")
-            return send_file(path, as_attachment=True)
         elif file_type == 'firewall_rules':
             path = os.path.join("firewall_rules", "firewall_rules.txt")
-            return send_file(path, as_attachment=True)
         else:
             flash('Invalid file type requested', 'error')
             return redirect(url_for('results'))
+
+        return send_file(path, as_attachment=True)
     except Exception as e:
         logging.error(f"Failed to download file: {str(e)}")
         flash(f"Error downloading file: {str(e)}", 'error')
         return redirect(url_for('results'))
 
+# Automatically open browser when server starts
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    def open_browser():
+        time.sleep(1)
+        webbrowser.open("http://127.0.0.1:5000")
+
+    if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+        threading.Thread(target=open_browser).start()
+
+    app.run(debug=True, host='127.0.0.1', port=5000)
