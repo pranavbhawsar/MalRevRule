@@ -135,7 +135,7 @@ def generate_signatures(static_analysis_file, dynamic_analysis_file):
             static_data = json.load(f)
         with open(dynamic_analysis_file, "r") as f:
             dynamic_data = json.load(f)
-        output_path = os.path.join("signatures", "sample.yara")
+        output_path = os.path.join("signatures", "malware_signature.yara")
         return generate_yara_rule(static_data, dynamic_data, output_path)
     except Exception as e:
         logging.error(f"Signature generation failed: {str(e)}")
