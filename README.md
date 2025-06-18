@@ -50,7 +50,14 @@ sudo apt install -y radare2 libmagic1 python3-pip \
 
 1. Clone or download the repo.
 
-2. Install Python dependencies:
+2. Create the Python 3 Virtual Environment:
+
+```bash
+python3 -m venv testenv
+source testenv/bin/activate
+```
+
+3. Install Python dependencies:
 
 ```bash
 pip install -r requirements.txt
