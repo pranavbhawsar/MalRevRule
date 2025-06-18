@@ -62,7 +62,7 @@ def generate_firewall(static_analysis_file, dynamic_analysis_file):
             static_data = json.load(f)
         with open(dynamic_analysis_file, "r") as f:
             dynamic_data = json.load(f)
-        output_path = os.path.join("firewall_rules", "sample_firewall_rules.txt")
+        output_path = os.path.join("firewall_rules", "firewall_rules.txt")
         return generate_firewall_rules(static_data, dynamic_data, output_path)
     except Exception as e:
         logging.error(f"Firewall generation failed: {str(e)}")
