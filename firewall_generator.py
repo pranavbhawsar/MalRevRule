@@ -9,7 +9,7 @@ logging.basicConfig(filename=os.path.join("logs", "analysis_log.db"),
                     format="%(asctime)s - %(levelname)s - %(message)s")
 
 def generate_firewall_rules(static_data, dynamic_data, output_path):
-    """Generate concise firewall rules from static and dynamic analysis data."""
+    """Generate Windows firewall rules from static and dynamic analysis data."""
     try:
         # Extract static IOCs
         static_iocs = static_data.get("iocs", {})
@@ -21,43 +21,41 @@ def generate_firewall_rules(static_data, dynamic_data, output_path):
         dynamic_ips = list(set(dynamic_network.get("ips", [])))
         dynamic_urls = dynamic_network.get("dns_requests", [])
 
-        # Combine and deduplicate IPs and URLs
+        # Combine and deduplicate
         all_ips = list(set(static_ips + dynamic_ips))
         all_urls = list(set(static_urls + dynamic_urls))
+
         if not all_ips and not all_urls:
             return {"success": False, "error": "No IPs or URLs found to generate firewall rules"}
 
-        # Prepare firewall rules
+        # Prepare firewall rules in Windows format
         rules = [
-            f"# Firewall Rules for {static_data.get('filename', 'Unknown')} - Generated on {datetime.now().strftime('%Y-%m-%d')}",
-            "# Block and log outbound traffic to malicious IPs"
+            f"# Windows Firewall Rules for {static_data.get('filename', 'Unknown')} - Generated on {datetime.now().strftime('%Y-%m-%d')}",
+            "# Block outbound traffic to known malicious IPs using netsh advfirewall"
         ]
 
-        # Add rules for IPs with logging (one rule per IP)
         for i, ip in enumerate(all_ips, 1):
-            rules.append(f'iptables -A OUTPUT -d {ip} -j LOG --log-prefix "Malware Blocked IP{i}: "')
-            rules.append(f'iptables -A OUTPUT -d {ip} -j DROP')
+            rules.append(f'netsh advfirewall firewall add rule name="Block Malicious IP{i} ({ip})" dir=out action=block remoteip={ip}')
 
-        # Add DNS sinkholing suggestions for URLs
         if all_urls:
-            rules.append("\n# Suggested DNS Sinkholing (use dnsmasq or unbound to implement):")
+            rules.append("\n# Suggested DNS Sinkholing (manual configuration or enterprise DNS filtering):")
             for url in all_urls:
                 rules.append(f'# Block domain: {url}')
-                rules.append(f'# e.g., dnsmasq: address=/{url}/127.0.0.1')
+                rules.append(f'# Suggestion: Redirect {url} to 127.0.0.1 using your DNS configuration')
 
         # Write to file
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         with open(output_path, "w") as f:
             f.write("\n".join(rules))
         os.chmod(output_path, 0o777)
-        logging.info(f"Firewall rules generated: {output_path}")
+        logging.info(f"Windows firewall rules generated: {output_path}")
         return {"success": True, "output_file": output_path}
     except Exception as e:
         logging.error(f"Firewall rule generation failed: {str(e)}")
         return {"success": False, "error": str(e)}
 
 def generate_firewall(static_analysis_file, dynamic_analysis_file):
-    """Generate firewall rules from static and dynamic analysis JSON."""
+    """Generate Windows firewall rules from static and dynamic analysis JSON."""
     try:
         with open(static_analysis_file, "r") as f:
             static_data = json.load(f)

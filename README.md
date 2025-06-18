@@ -54,7 +54,12 @@ sudo apt install -y radare2 libmagic1 python3-pip \
 
 ```bash
 python3 -m venv testenv
-source testenv/bin/activate
+
+source testenv/bin/activate  #for Linux & MacOS
+
+testenv\Scripts\activate  #If you're using Command Prompt (cmd.exe) in Windows
+
+.\testenv\Scripts\Activate.ps1  #If you're using PowerShell in Windows
 ```
 
 3. Install Python dependencies:
@@ -71,12 +76,6 @@ Run the full pipeline on a sample executable:
 
 ```bash
 python3 main.py
-```
-
-By default, the tool expects the file to be placed at:
-
-```
-~/Desktop/Tool/input/sample.exe
 ```
 
 ### 🌐 Web Interface
