@@ -1,19 +1,19 @@
 import os
 import shutil
-import json  # Added import for json
+import json
 from flask import Flask, render_template, request, send_file, flash, redirect, url_for
 from werkzeug.utils import secure_filename
 from main import main as run_pipeline
 import logging
 
 # Setup logging
-logging.basicConfig(filename=os.path.expanduser("~/Desktop/Tool/logs/analysis_log.db"),
+logging.basicConfig(filename=os.path.join("logs", "analysis_log.db"),
                     level=logging.INFO,
                     format="%(asctime)s - %(levelname)s - %(message)s")
 
-app = Flask(__name__, template_folder="ui/templates", static_folder="ui/static")
+app = Flask(__name__, template_folder=os.path.join("ui", "templates"), static_folder=os.path.join("ui", "static"))
 app.config['SECRET_KEY'] = 'your-secret-key-here'  # Replace with a secure key
-app.config['UPLOAD_FOLDER'] = os.path.expanduser("~/Desktop/Tool/input")
+app.config['UPLOAD_FOLDER'] = "input"
 app.config['ALLOWED_EXTENSIONS'] = {'exe'}
 
 def allowed_file(filename):
@@ -46,7 +46,7 @@ def upload_file():
             try:
                 # Clear previous outputs
                 for folder in ['output', 'reports', 'signatures', 'firewall_rules']:
-                    folder_path = os.path.expanduser(f"~/Desktop/Tool/{folder}")
+                    folder_path = folder
                     if os.path.exists(folder_path):
                         shutil.rmtree(folder_path)
                     os.makedirs(folder_path)
@@ -69,12 +69,12 @@ def results():
     """Display the analysis results."""
     try:
         # Load static analysis
-        static_file = os.path.expanduser("~/Desktop/Tool/output/sample_analysis.json")
+        static_file = os.path.join("output", "sample_analysis.json")
         with open(static_file, 'r') as f:
             static_data = json.load(f)
 
         # Load dynamic analysis
-        dynamic_file = os.path.expanduser("~/Desktop/Tool/output/sample_dynamic.json")
+        dynamic_file = os.path.join("output", "sample_dynamic.json")
         with open(dynamic_file, 'r') as f:
             dynamic_data = json.load(f)
 
@@ -96,16 +96,16 @@ def download_file(file_type):
     """Allow downloading of generated files."""
     try:
         if file_type == 'pdf_report':
-            path = os.path.expanduser("~/Desktop/Tool/reports/sample_analysis_report.pdf")
+            path = os.path.join("reports", "sample_analysis_report.pdf")
             return send_file(path, as_attachment=True)
         elif file_type == 'stix_report':
-            path = os.path.expanduser("~/Desktop/Tool/reports/sample_analysis_stix.json")
+            path = os.path.join("reports", "sample_analysis_stix.json")
             return send_file(path, as_attachment=True)
         elif file_type == 'yara_rule':
-            path = os.path.expanduser("~/Desktop/Tool/signatures/sample.yara")
+            path = os.path.join("signatures", "sample.yara")
             return send_file(path, as_attachment=True)
         elif file_type == 'firewall_rules':
-            path = os.path.expanduser("~/Desktop/Tool/firewall_rules/sample_firewall_rules.txt")
+            path = os.path.join("firewall_rules", "sample_firewall_rules.txt")
             return send_file(path, as_attachment=True)
         else:
             flash('Invalid file type requested', 'error')

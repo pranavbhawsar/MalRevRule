@@ -6,20 +6,20 @@ from weasyprint import HTML, CSS
 from stix2 import Malware, Indicator, Report, File, Relationship, Bundle
 
 # Setup logging
-logging.basicConfig(filename=os.path.expanduser("~/Desktop/Tool/logs/analysis_log.db"),
+logging.basicConfig(filename=os.path.join("logs", "analysis_log.db"),
                     level=logging.INFO,
                     format="%(asctime)s - %(levelname)s - %(message)s")
 
 class ReportGenerator:
     def __init__(self, static_analysis_file, dynamic_analysis_file):
         """Initialize the report generator."""
-        self.static_analysis_file = os.path.expanduser(static_analysis_file)
-        self.dynamic_analysis_file = os.path.expanduser(dynamic_analysis_file)
-        self.reports_dir = os.path.expanduser("~/Desktop/Tool/reports")
+        self.static_analysis_file = os.path.join("output", os.path.basename(static_analysis_file))
+        self.dynamic_analysis_file = os.path.join("output", os.path.basename(dynamic_analysis_file))
+        self.reports_dir = "reports"
         self.pdf_file = os.path.join(self.reports_dir, "sample_analysis_report.pdf")
         self.stix_file = os.path.join(self.reports_dir, "sample_analysis_stix.json")
-        self.yara_file = os.path.expanduser("~/Desktop/Tool/signatures/sample.yara")
-        self.firewall_file = os.path.expanduser("~/Desktop/Tool/firewall_rules/sample_firewall_rules.txt")
+        self.yara_file = os.path.join("signatures", "sample.yara")
+        self.firewall_file = os.path.join("firewall_rules", "sample_firewall_rules.txt")
         os.makedirs(self.reports_dir, exist_ok=True)
         self.classification = "WHITE"
         self.report_id = "MAR-20250615-001"
@@ -197,7 +197,7 @@ class ReportGenerator:
                     <tr><th>Attribute</th><th>Value</th></tr>
                     <tr><td>Filename</td><td>{static_data['filename']}</td></tr>
                     <tr><td>MD5</td><td>{static_data['md5']}</td></tr>
-                    <tr><td>File Size</td><td>{os.path.getsize(os.path.expanduser('~/Desktop/Tool/input/sample.exe'))} bytes</td></tr>
+                    <tr><td>File Size</td><td>{os.path.getsize(os.path.join('input', 'sample.exe'))} bytes</td></tr>
                     <tr><td>Company Name</td><td>{static_data['version_info'].get('CompanyName', 'Unknown')}</td></tr>
                     <tr><td>Product Name</td><td>{static_data['version_info'].get('ProductName', 'Unknown')}</td></tr>
                     <tr><td>File Version</td><td>{static_data['version_info'].get('FileVersion', 'Unknown')}</td></tr>
@@ -344,8 +344,8 @@ def generate_reports(static_analysis_file, dynamic_analysis_file=None):
     return generator.generate_reports()
 
 if __name__ == "__main__":
-    static_file = "~/Desktop/Tool/output/sample_analysis.json"
-    dynamic_file = "~/Desktop/Tool/output/sample_dynamic.json"
+    static_file = os.path.join("output", "sample_analysis.json")
+    dynamic_file = os.path.join("output", "sample_dynamic.json")
     result = generate_reports(static_file, dynamic_file)
     if result["success"]:
         print(f"Reports generated: {result['output_files']}")

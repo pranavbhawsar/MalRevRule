@@ -4,7 +4,7 @@ from datetime import datetime
 import logging
 
 # Setup logging
-logging.basicConfig(filename=os.path.expanduser("~/Desktop/Tool/logs/analysis_log.db"),
+logging.basicConfig(filename=os.path.join("logs", "analysis_log.db"),
                     level=logging.INFO,
                     format="%(asctime)s - %(levelname)s - %(message)s")
 
@@ -62,15 +62,15 @@ def generate_firewall(static_analysis_file, dynamic_analysis_file):
             static_data = json.load(f)
         with open(dynamic_analysis_file, "r") as f:
             dynamic_data = json.load(f)
-        output_path = os.path.expanduser("~/Desktop/Tool/firewall_rules/sample_firewall_rules.txt")
+        output_path = os.path.join("firewall_rules", "sample_firewall_rules.txt")
         return generate_firewall_rules(static_data, dynamic_data, output_path)
     except Exception as e:
         logging.error(f"Firewall generation failed: {str(e)}")
         return {"success": False, "error": str(e)}
 
 if __name__ == "__main__":
-    static_analysis_file = os.path.expanduser("~/Desktop/Tool/output/sample_analysis.json")
-    dynamic_analysis_file = os.path.expanduser("~/Desktop/Tool/output/sample_dynamic.json")
+    static_analysis_file = os.path.join("output", "sample_analysis.json")
+    dynamic_analysis_file = os.path.join("output", "sample_dynamic.json")
     result = generate_firewall(static_analysis_file, dynamic_analysis_file)
     if result["success"]:
         print(f"Firewall rules generated: {result['output_file']}")

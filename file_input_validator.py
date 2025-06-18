@@ -5,7 +5,7 @@ import logging
 import magic
 
 # Setup logging
-logging.basicConfig(filename=os.path.expanduser("~/Desktop/Tool/logs/analysis_log.db"),
+logging.basicConfig(filename=os.path.join("logs", "analysis_log.db"),
                     level=logging.INFO,
                     format="%(asctime)s - %(levelname)s - %(message)s")
 
@@ -26,7 +26,7 @@ def compute_hashes(file_path):
 def log_metadata(file_path, size, file_type, md5, sha256):
     """Log file metadata to SQLite database."""
     try:
-        db_path = os.path.expanduser("~/Desktop/Tool/logs/analysis_log.db")
+        db_path = os.path.join("logs", "analysis_log.db")
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
         cursor.execute("""
@@ -54,8 +54,8 @@ def log_metadata(file_path, size, file_type, md5, sha256):
 def validate_input_file(file_path):
     """Validate input file and log metadata."""
     try:
-        file_path = os.path.expanduser(file_path)
-        input_dir = os.path.expanduser("~/Desktop/Tool/input")
+        file_path = os.path.join("input", os.path.basename(file_path))
+        input_dir = "input"
         os.makedirs(input_dir, exist_ok=True)
 
         # Check if file exists and is readable
@@ -99,7 +99,7 @@ def validate_input_file(file_path):
         return {"success": False, "error": str(e)}
 
 if __name__ == "__main__":
-    input_file = "~/Desktop/Tool/input/sample.exe"
+    input_file = os.path.join("input", "sample.exe")
     result = validate_input_file(input_file)
     if result["success"]:
         print(f"Validation successful: {result['output_file']}")

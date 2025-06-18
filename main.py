@@ -7,10 +7,26 @@ from signature_generator import generate_signatures
 from firewall_generator import generate_firewall
 import logging
 
-# Setup logging
-logging.basicConfig(filename=os.path.expanduser("~/Desktop/Tool/logs/analysis_log.db"),
-                    level=logging.INFO,
-                    format="%(asctime)s - %(levelname)s - %(message)s")
+# Get base directory (the directory where this script is located)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Define relative paths
+LOGS_DIR = os.path.join(BASE_DIR, 'logs')
+OUTPUT_DIR = os.path.join(BASE_DIR, 'output')
+INPUT_DIR = os.path.join(BASE_DIR, 'input')
+
+# Ensure necessary directories exist
+os.makedirs(LOGS_DIR, exist_ok=True)
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+os.makedirs(INPUT_DIR, exist_ok=True)
+
+# Setup logging with relative path
+log_file_path = os.path.join(LOGS_DIR, 'analysis_log.db')
+logging.basicConfig(
+    filename=log_file_path,
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 def main(input_file_path):
     """Run the full malware analysis pipeline and return outputs."""
@@ -26,7 +42,7 @@ def main(input_file_path):
 
         # Step 2: Reverse engineering (static analysis)
         logging.info("Starting reverse engineering")
-        static_output_path = os.path.expanduser("~/Desktop/Tool/output/sample_analysis.json")
+        static_output_path = os.path.join(OUTPUT_DIR, 'sample_analysis.json')
         static_analysis_result = perform_static_analysis(validation_result["output_file"], static_output_path)
         if not static_analysis_result["success"]:
             logging.error(f"Static analysis failed: {static_analysis_result['error']}")
@@ -80,10 +96,10 @@ def main(input_file_path):
         raise
 
 if __name__ == "__main__":
-    input_file = os.path.expanduser("~/Desktop/Tool/input/sample.exe")
+    input_file = os.path.join(INPUT_DIR, 'sample.exe')
     try:
         outputs = main(input_file)
-        print(f"Pipeline completed successfully:")
+        print("Pipeline completed successfully:")
         print(f"Static Analysis: {outputs['static_analysis']}")
         print(f"Dynamic Analysis: {outputs['dynamic_analysis']}")
         print(f"Reports: {outputs['reports']}")

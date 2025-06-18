@@ -4,16 +4,16 @@ from datetime import datetime
 import logging
 
 # Setup logging
-logging.basicConfig(filename=os.path.expanduser("~/Desktop/Tool/logs/analysis_log.db"),
+logging.basicConfig(filename=os.path.join("logs", "analysis_log.db"),
                     level=logging.INFO,
                     format="%(asctime)s - %(levelname)s - %(message)s")
 
 class DynamicAnalyzer:
     def __init__(self, file_path, static_analysis_file):
         """Initialize the dynamic analysis module."""
-        self.file_path = os.path.expanduser(file_path)
-        self.static_analysis_file = os.path.expanduser(static_analysis_file)
-        self.output_dir = os.path.expanduser("~/Desktop/Tool/output")
+        self.file_path = os.path.join("input", os.path.basename(file_path))
+        self.static_analysis_file = os.path.join("output", os.path.basename(static_analysis_file))
+        self.output_dir = "output"
         self.output_json = os.path.join(self.output_dir, "sample_dynamic.json")
         os.makedirs(self.output_dir, exist_ok=True)
 
@@ -77,8 +77,8 @@ def perform_dynamic_analysis(file_path, static_analysis_file):
     return analyzer.simulate_sandbox_execution()
 
 if __name__ == "__main__":
-    file_path = "~/Desktop/Tool/input/sample.exe"
-    static_analysis_file = "~/Desktop/Tool/output/sample_analysis.json"
+    file_path = os.path.join("input", "sample.exe")
+    static_analysis_file = os.path.join("output", "sample_analysis.json")
     result = perform_dynamic_analysis(file_path, static_analysis_file)
     if result["success"]:
         print(f"Dynamic analysis successful: {result['output_file']}")

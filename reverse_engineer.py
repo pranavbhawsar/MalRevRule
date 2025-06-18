@@ -8,15 +8,15 @@ import r2pipe
 import pefile
 
 # Setup logging
-logging.basicConfig(filename=os.path.expanduser("~/Desktop/Tool/logs/analysis_log.db"),
+logging.basicConfig(filename=os.path.join("logs", "analysis_log.db"),
                     level=logging.INFO,
                     format="%(asctime)s - %(levelname)s - %(message)s")
 
 class ReverseEngineer:
     def __init__(self, binary_path, output_file):
         """Initialize the reverse engineer."""
-        self.binary_path = os.path.expanduser(binary_path)
-        self.output_file = os.path.expanduser(output_file)
+        self.binary_path = os.path.join("input", os.path.basename(binary_path))
+        self.output_file = os.path.join("output", os.path.basename(output_file))
         self.r2 = None
         os.makedirs(os.path.dirname(self.output_file), exist_ok=True)
 
@@ -447,8 +447,8 @@ def perform_static_analysis(binary_path, output_file):
     return engineer.analyze()
 
 if __name__ == "__main__":
-    binary = "~/Desktop/Tool/input/sample.exe"
-    output = "~/Desktop/Tool/output/sample_analysis.json"
+    binary = os.path.join("input", "sample.exe")
+    output = os.path.join("output", "sample_analysis.json")
     result = perform_static_analysis(binary, output)
     if result["success"]:
         print(f"Static analysis completed: {result['output_file']}")
