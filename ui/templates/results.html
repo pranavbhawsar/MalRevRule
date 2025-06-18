@@ -29,8 +29,8 @@
                 <td>{{ static_data['filename'] }}</td>
             </tr>
             <tr>
-                <th>MD5</th>
-                <td>{{ static_data['md5'] }}</td>
+                <th>SHA256</th>
+                <td>{{ static_data['sha256'] }}</td>
             </tr>
             <tr>
                 <th>Suspicious Imports</th>
@@ -83,8 +83,8 @@
         <h2>Downloads</h2>
         <div class="mb-3">
             <a href="{{ url_for('download_file', file_type='pdf_report') }}" class="btn btn-success">Download PDF Report</a>
-            <a href="{{ url_for('download_file', file_type='stix_report') }}" class="btn btn-success">Download STIX Report</a>
-            <a href="{{ url_for('download_file', file_type='yara_rule') }}" class="btn btn-success">Download YARA Rule</a>
+            <a href="{{ url_for('download_file', file_type='stix_report') }}" class="btn btn-success">Download JSON Report</a>
+            <a href="{{ url_for('download_file', file_type='yara_rule') }}" class="btn btn-success">Download Malware Signature</a>
             <a href="{{ url_for('download_file', file_type='firewall_rules') }}" class="btn btn-success">Download Firewall Rules</a>
         </div>
         <div class="text-center">
