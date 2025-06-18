@@ -15,12 +15,14 @@ class ReportGenerator:
         """Initialize the report generator."""
         self.static_analysis_file = os.path.join("output", os.path.basename(static_analysis_file))
         self.dynamic_analysis_file = os.path.join("output", os.path.basename(dynamic_analysis_file))
+        
         self.reports_dir = "reports"
         self.pdf_file = os.path.join(self.reports_dir, "sample_analysis_report.pdf")
         self.stix_file = os.path.join(self.reports_dir, "sample_analysis_stix.json")
-        self.yara_file = os.path.join("signatures", "sample.yara")
-        self.firewall_file = os.path.join("firewall_rules", "sample_firewall_rules.txt")
+        self.yara_file = os.path.join("signatures", "malware_signature.yara")
+        self.firewall_file = os.path.join("firewall_rules", "firewall_rules.txt")
         os.makedirs(self.reports_dir, exist_ok=True)
+        
         self.classification = "WHITE"
         self.report_id = "MAR-20250615-001"
 
@@ -177,7 +179,7 @@ class ReportGenerator:
                 <!-- Section 2: Executive Summary -->
                 <h2>2. Executive Summary</h2>
                 <p>
-                    The file '{static_data['filename']}' (MD5: {static_data['md5']}) was analyzed on {datetime.now().strftime('%Y-%m-%d')}. 
+                    The file '{static_data['filename']}' (SHA256: {static_data['sha256']}) was analyzed on {datetime.now().strftime('%Y-%m-%d')}. 
                     It exhibits suspicious behavior, including the use of imports such as {', '.join(static_data['suspicious_imports']) or 'None'} 
                     and network activity involving IPs {', '.join(dynamic_data['network']['ips']) or 'None'}. 
                     Metadata suggests a possible origin of {static_data['origin']['possible_country']}, associated with {static_data['version_info'].get('CompanyName', 'Unknown')}. 
@@ -196,7 +198,7 @@ class ReportGenerator:
                 <table>
                     <tr><th>Attribute</th><th>Value</th></tr>
                     <tr><td>Filename</td><td>{static_data['filename']}</td></tr>
-                    <tr><td>MD5</td><td>{static_data['md5']}</td></tr>
+                    <tr><td>SHA256</td><td>{static_data['sha256']}</td></tr>
                     <tr><td>File Size</td><td>{os.path.getsize(os.path.join('input', 'sample.exe'))} bytes</td></tr>
                     <tr><td>Company Name</td><td>{static_data['version_info'].get('CompanyName', 'Unknown')}</td></tr>
                     <tr><td>Product Name</td><td>{static_data['version_info'].get('ProductName', 'Unknown')}</td></tr>
@@ -277,7 +279,7 @@ class ReportGenerator:
         try:
             file_obj = File(
                 name=static_data['filename'],
-                hashes={'MD5': static_data['md5']}
+                hashes={'SHA256': static_data['sha256']}
             )
             malware = Malware(
                 name=f"Malware - {static_data['filename']}",
